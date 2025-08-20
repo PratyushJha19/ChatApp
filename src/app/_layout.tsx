@@ -7,7 +7,7 @@ const RootNavigation = () => {
   useEffect(() => {
     setTimeout(async () => {
       await SplashScreen.hideAsync();
-    }, 2000); // Adjust the timeout duration as needed
+    }, 1000); // Adjust the timeout duration as needed
   }, []);
 
   const [isLogin, setIsLogin] = useState(false); // Replace with actual login state logic
