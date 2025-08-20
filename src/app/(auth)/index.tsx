@@ -8,18 +8,23 @@ import { moderateScale, verticalScale } from "react-native-size-matters";
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  let loading_timeout = () => {
-    setIsLoading(true);
-  };
-
   let navigateToWelcome = () => {
     // Navigation logic to welcome screen can be added here
     router.push("/(auth)/terms_agree");
   };
 
+  let loading_timeout = () => {
+    setIsLoading(true);
+    const nextScreenTimeout = setTimeout(navigateToWelcome, 2000); // Navigate to welcome after loading
+    return () => clearTimeout(nextScreenTimeout); // Clear timeout on component unmount
+  };
+
   useEffect(() => {
-    setTimeout(loading_timeout, 4000); // Simulate a loading time of 2 seconds
-    setTimeout(navigateToWelcome, 2000); // Navigate to welcome after loading
+    const timeoutID = setTimeout(loading_timeout, 4000); // Simulate a loading time of 2 seconds
+
+    return () => {
+      clearTimeout(timeoutID);
+    };
   }, []);
 
   return (
