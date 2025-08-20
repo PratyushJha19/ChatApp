@@ -1,14 +1,12 @@
-import { Link } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 
-const Auth = () => {
+const Login = () => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Auth</Text>
-      <Link href={"/login"}>Login</Link>
+      <Text>Login</Text>
     </View>
   );
 };
 
-export default Auth;
+export default Login;

@@ -10,11 +10,11 @@ const RootNavigation = () => {
     }, 2000); // Adjust the timeout duration as needed
   }, []);
 
-  const [isLogin, setIsLogin] = useState(true); // Replace with actual login state logic
+  const [isLogin, setIsLogin] = useState(false); // Replace with actual login state logic
 
   return (
     <>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }} />
       {isLogin ? <Redirect href={"/(main)"} /> : <Redirect href={"/(auth)"} />}
     </>
   );
