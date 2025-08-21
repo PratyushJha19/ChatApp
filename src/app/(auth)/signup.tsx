@@ -7,13 +7,16 @@ import {
   StyleSheet,
   TextInput,
   Pressable,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
   const router = useRouter();
 
   return (
@@ -26,10 +29,69 @@ const Login = () => {
       <View style={{ padding: 10, alignItems: "center" }}>
         <KeyboardAvoidingView>
           <View>
-            <Text style={styles.header_text}>Login to your account</Text>
+            <Text style={styles.header_text}>Setup your profile</Text>
+            <Text
+              style={{
+                marginTop: verticalScale(10),
+                color: "#bbbbbbff",
+                textAlign: "center",
+                fontSize: moderateScale(15),
+                fontWeight: "500",
+              }}
+            >
+              Profiles are visible to your friends, connection and groups.
+            </Text>
+
+            <Pressable>
+              <Image
+                style={{
+                  width: 70,
+                  height: 70,
+                  borderRadius: 35,
+                  resizeMode: "cover",
+                  alignSelf: "center",
+                  marginTop: verticalScale(20),
+                  marginBottom: verticalScale(-50),
+                }}
+                source={{
+                  uri: image
+                    ? image
+                    : "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg",
+                }}
+              ></Image>
+            </Pressable>
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: verticalScale(60),
+                color: "#bbbbbbff",
+                fontSize: moderateScale(15),
+                marginBottom: verticalScale(-60),
+              }}
+            >
+              Add
+            </Text>
           </View>
 
           <View style={styles.form}>
+            <View>
+              <Text style={styles.email_text}>Name</Text>
+              <View>
+                <TextInput
+                  value={name}
+                  placeholder="Enter your email"
+                  onChangeText={setName}
+                  placeholderTextColor={"#2c2c2cff"}
+                  style={{
+                    backgroundColor: "#ffffffff",
+                    borderRadius: moderateScale(50),
+                    paddingHorizontal: scale(20),
+                    paddingVertical: verticalScale(8),
+                    fontSize: moderateScale(15),
+                  }}
+                ></TextInput>
+              </View>
+            </View>
             <View>
               <Text style={styles.email_text}>Email</Text>
               <View>
@@ -49,7 +111,7 @@ const Login = () => {
               </View>
             </View>
 
-            <View style={{ marginTop: verticalScale(20) }}>
+            <View>
               <Text style={styles.email_text}>Password</Text>
               <View>
                 <TextInput
@@ -86,19 +148,19 @@ const Login = () => {
                   fontWeight: "600",
                 }}
               >
-                Login
+                Register
               </Text>
             </Pressable>
 
             <Pressable
-              style={styles.signup_button}
+              style={styles.login_button}
               onPress={() => {
-                router.push("/(auth)/signup");
+                router.push("/(auth)/login");
               }}
             >
               <Text style={styles.signup_text}>
-                Dont have an account?{" "}
-                <Text style={{ color: "#0091ffff" }}>Signup</Text> instead
+                Already have an account?{" "}
+                <Text style={{ color: "#0091ffff" }}>Login</Text> instead
               </Text>
             </Pressable>
           </View>
@@ -113,7 +175,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(32),
     fontWeight: "bold",
     color: "#0091ffff",
-    marginTop: verticalScale(80),
+    marginTop: verticalScale(40),
     textAlign: "center",
     justifyContent: "center",
   },
@@ -128,8 +190,9 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(10),
     paddingHorizontal: scale(10),
     fontSize: moderateScale(18),
+    marginTop: verticalScale(20),
   },
-  signup_button: {
+  login_button: {
     marginTop: verticalScale(10),
     alignItems: "center",
   },
@@ -139,4 +202,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Signup;
