@@ -8,9 +8,11 @@ import {
   TextInput,
   Pressable,
   Image,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import axios from "axios";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +21,28 @@ const Signup = () => {
   const [image, setImage] = useState("");
   const router = useRouter();
 
+  const handleRegister = () => {
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+      image,
+    };
+
+    try {
+      axios.post("http://192.168.0.10:5000/register", user);
+      Alert.alert("Success", "User registered successfully, please login");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setImage("");
+      router.push("/(auth)/login");
+    } catch (error) {
+      console.log("Error registering user:", error);
+      Alert.alert("Error", "Failed to register user");
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -26,7 +50,7 @@ const Signup = () => {
         backgroundColor: "#171717ff",
       }}
     >
-      <View style={{ padding: 10, alignItems: "center" }}>
+      <View style={{ alignItems: "center", paddingHorizontal: scale(20) }}>
         <KeyboardAvoidingView>
           <View>
             <Text style={styles.header_text}>Setup your profile</Text>
@@ -66,7 +90,7 @@ const Signup = () => {
                 marginTop: verticalScale(60),
                 color: "#bbbbbbff",
                 fontSize: moderateScale(15),
-                marginBottom: verticalScale(-60),
+                marginBottom: verticalScale(-65),
               }}
             >
               Add
@@ -79,7 +103,7 @@ const Signup = () => {
               <View>
                 <TextInput
                   value={name}
-                  placeholder="Enter your email"
+                  placeholder="Enter your name"
                   onChangeText={setName}
                   placeholderTextColor={"#2c2c2cff"}
                   style={{
@@ -115,6 +139,7 @@ const Signup = () => {
               <Text style={styles.email_text}>Password</Text>
               <View>
                 <TextInput
+                  secureTextEntry={true}
                   value={password}
                   placeholder="Enter your password"
                   onChangeText={setPassword}
@@ -130,9 +155,28 @@ const Signup = () => {
               </View>
             </View>
 
+            <View>
+              <Text style={styles.email_text}>Image</Text>
+              <View>
+                <TextInput
+                  value={image}
+                  placeholder="Enter your image URL"
+                  onChangeText={setImage}
+                  placeholderTextColor={"#2c2c2cff"}
+                  style={{
+                    backgroundColor: "#ffffffff",
+                    borderRadius: moderateScale(50),
+                    paddingHorizontal: scale(20),
+                    paddingVertical: verticalScale(8),
+                    fontSize: moderateScale(15),
+                  }}
+                />
+              </View>
+            </View>
+
             <Pressable
               style={{
-                marginTop: verticalScale(50),
+                marginTop: verticalScale(30),
                 backgroundColor: "#0091ffff",
                 padding: moderateScale(10),
                 borderRadius: moderateScale(50),
@@ -141,6 +185,7 @@ const Signup = () => {
               }}
             >
               <Text
+                onPress={handleRegister}
                 style={{
                   textAlign: "center",
                   color: "#ffffffff",
@@ -175,7 +220,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(32),
     fontWeight: "bold",
     color: "#0091ffff",
-    marginTop: verticalScale(40),
+    marginTop: verticalScale(20),
     textAlign: "center",
     justifyContent: "center",
   },
@@ -190,7 +235,7 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(10),
     paddingHorizontal: scale(10),
     fontSize: moderateScale(18),
-    marginTop: verticalScale(20),
+    marginTop: verticalScale(12),
   },
   login_button: {
     marginTop: verticalScale(10),

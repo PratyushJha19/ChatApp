@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -10,11 +10,36 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "@/src/context/authcontext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { token, setToken, isLogin, setIsLogin } = useAuth();
+
+  useEffect(() => {
+    if (token) {
+      router.replace("/(main)");
+    }
+  }, [token, router]);
+
+  const handleLogin = () => {
+    const user = {
+      email: email,
+      password: password,
+    };
+
+    axios.post("http://192.168.0.10:5000/login", user).then((res) => {
+      const token = res.data.token;
+      AsyncStorage.setItem("authToken", token);
+      setToken(token);
+      console.log(res.data);
+      setIsLogin(true);
+    });
+  };
 
   return (
     <SafeAreaView
@@ -53,6 +78,7 @@ const Login = () => {
               <Text style={styles.email_text}>Password</Text>
               <View>
                 <TextInput
+                  secureTextEntry={true}
                   value={password}
                   placeholder="Enter your password"
                   onChangeText={setPassword}
@@ -79,6 +105,7 @@ const Login = () => {
               }}
             >
               <Text
+                onPress={handleLogin}
                 style={{
                   textAlign: "center",
                   color: "#ffffffff",
