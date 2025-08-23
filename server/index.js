@@ -102,6 +102,67 @@ app.get("/getphoto/:userId", async (req, res) => {
   res.status(200).json({ image: user.image });
 });
 
+app.get("/getrequests/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate(
+      "requests.from",
+      "name email image"
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ requests: user.requests });
+  } catch (error) {
+    console.log("Error fetching requests:", error);
+    res.status(500).json({ message: "Error fetching requests" });
+  }
+});
+
+app.post("/acceptrequest", async (req, res) => {
+  try {
+    const { userId, requestId } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove request from user's list
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { requests: { from: requestId } } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    // Add each other as friends
+    await User.findByIdAndUpdate(userId, { $push: { friends: requestId } });
+    await User.findByIdAndUpdate(requestId, { $push: { friends: userId } });
+
+    res.status(200).json({ message: "Request accepted successfully" });
+  } catch (error) {
+    console.error("Error accepting request:", error);
+    res.status(500).json({ message: "Error accepting request", error });
+  }
+});
+
+app.get("/singleuser/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate(
+      "friends",
+      "name email image"
+    );
+    res.status(200).json(user.friends);
+  } catch (error) {
+    console.log("Error fetching user:", error);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

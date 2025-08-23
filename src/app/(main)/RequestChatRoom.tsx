@@ -14,6 +14,8 @@ import { useAuth } from "@/src/context/authcontext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native";
 import { moderateScale } from "react-native-size-matters";
+import axios from "axios";
+import { Alert } from "react-native";
 
 // 1. Define your navigator param list
 type RootStackParamList = {
@@ -33,7 +35,25 @@ const RequestChatRoom = () => {
   const [message, setMessage] = useState("");
   const { token, userId } = useAuth();
 
-  const sendMessage = async () => {};
+  const sendMessage = async () => {
+    try {
+      const userData = {
+        senderId: userId,
+        receiverId: route.params.receiverId,
+        message: message,
+      };
+      const response = await axios.post(
+        "http://192.168.0.10:5000/sendrequest",
+        userData
+      );
+      if (response.status == 200) {
+        setMessage("");
+        Alert.alert("Success", "Request sent successfully");
+      }
+    } catch (error) {
+      console.log("Error sending message:", error);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
