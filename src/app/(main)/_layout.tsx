@@ -53,7 +53,7 @@ export default function AuthTabs() {
       />
 
       <Tabs.Screen
-        name="Chat"
+        name="ChatRoom"
         options={{
           href: null, // this will hide the screen from the tab bar
           headerShown: true,

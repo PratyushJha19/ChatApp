@@ -2,6 +2,7 @@ import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { AuthProvider, useAuth } from "../context/authcontext";
+import { SocketContextProvider } from "../context/socketContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,7 +30,9 @@ const RootNavigation = () => {
 
   return (
     <AuthProvider>
-      <NavigationContent />
+      <SocketContextProvider>
+        <NavigationContent />
+      </SocketContextProvider>
     </AuthProvider>
   );
 };

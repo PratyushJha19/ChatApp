@@ -107,7 +107,7 @@ const Header = () => {
   };
 
   // console.log(requests);
-  console.log(chats);
+  // console.log(chats);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -145,7 +145,16 @@ const Header = () => {
               <Pressable
                 key={index}
                 style={styles.chatCard}
-                onPress={() => router.push("/(main)/Chat")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(main)/ChatRoom",
+                    params: {
+                      name: item.name,
+                      receiverId: item._id,
+                      image: item.image,
+                    },
+                  })
+                }
               >
                 <Image
                   source={{
@@ -158,7 +167,7 @@ const Header = () => {
                 <View style={styles.chatTextContainer}>
                   <Text style={styles.chatName}>{item.name}</Text>
                   <Text style={styles.chatLastMessage} numberOfLines={1}>
-                    Last message preview...
+                    Tap to Chat
                   </Text>
                 </View>
                 <Ionicons
@@ -260,6 +269,7 @@ const styles = StyleSheet.create({
   },
   chatsSection: {
     marginBottom: verticalScale(10),
+    marginTop: verticalScale(10),
   },
   lowerSection: {
     marginTop: verticalScale(10), // Add top margin for spacing
@@ -268,14 +278,17 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(15),
     fontWeight: "500",
     color: "#007AFF",
+    paddingLeft: scale(10),
   },
   lower_text: {
     fontSize: moderateScale(15),
     fontWeight: "500",
     color: "#007AFF",
+    paddingLeft: scale(10),
   },
   // New style for the separator line
   separator: {
+    marginHorizontal: scale(7),
     height: 1, // The thickness of the line
     backgroundColor: "rgba(255, 255, 255, 0.2)", // A light gray color
     //marginHorizontal: scale(5), // Optional: adds horizontal padding
@@ -297,6 +310,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
+    paddingLeft: scale(10),
   },
   requestImage: {
     width: moderateScale(50),
@@ -318,6 +332,7 @@ const styles = StyleSheet.create({
     color: "#aaa",
   },
   chatCard: {
+    marginHorizontal: scale(10),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#2a2a2a",

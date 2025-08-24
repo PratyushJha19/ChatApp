@@ -7,6 +7,9 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import User from "./models/userModel.js";
 import Message from "./models/message.js";
+import { Server } from "socket.io";
+import http from "http";
+import { use } from "react";
 
 const app = express();
 const PORT = 5000;
@@ -165,4 +168,83 @@ app.get("/singleuser/:userId", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://192.168.0.10:8081",
+    methods: ["GET", "POST"],
+  },
+});
+
+const userSocketMap = {}; // {"userId": "hisSocketId"}
+
+io.on("connection", (socket) => {
+  console.log("a user connected", socket.id);
+  const userId = socket.handshake.query.userId;
+  console.log(userId);
+
+  if (userId && userId !== "undefined") {
+    userSocketMap[userId] = socket.id;
+  }
+
+  console.log("userSocketMap", userSocketMap);
+
+  socket.on("disconnect", () => {
+    console.log("a user disconnected", socket.id);
+    delete userSocketMap[userId];
+  });
+
+  socket.on("sendMessage", ({ senderId, receiverId, message }) => {
+    const receiverSocketId = userSocketMap[receiverId];
+
+    console.log("userId", receiverId);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("recieveMessage", { senderId, message });
+    }
+  });
+});
+
+app.post("/sendmessage", async (req, res) => {
+  try {
+    const { senderId, receiverId, message } = req.body;
+
+    const newMessage = new Message({ senderId, receiverId, message });
+    await newMessage.save();
+
+    const receiverSocketId = userSocketMap[receiverId];
+
+    if (receiverSocketId) {
+      console.log("Emiting receiveMessage event to receiver", receiverId);
+      io.to(receiverSocketId).emit("newMessage", { senderId, newMessage });
+    } else {
+      console.log("Receiver socket not found");
+    }
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.log("Error sending message:", error);
+    res.status(500).json({ message: "Error sending message" });
+  }
+});
+
+app.get("/messages", async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.query;
+    const messages = await Message.find({
+      $or: [
+        { senderId: senderId, receiverId: receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    }).populate("senderId", "_id name");
+    res.status(200).json(messages);
+  } catch (error) {
+    console.log("Error fetching message:", error);
+  }
+});
+
+httpServer.listen(6000, () => {
+  console.log("Socket.io is running on port 6000");
 });
